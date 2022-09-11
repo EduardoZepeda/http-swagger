@@ -149,7 +149,10 @@ func Handler(configFns ...func(*Config)) http.HandlerFunc {
 			return
 		}
 
-		matches := re.FindStringSubmatch(r.RequestURI)
+		// r.RequestURI returns an empty string in Vercel's go serverless implementation
+		// producing an out of index errror which result in a 500 error
+		// r.URL.Path works in the same way so it can be replaced safely
+		matches := re.FindStringSubmatch(r.URL.Path)
 
 		path := matches[2]
 
